@@ -1,0 +1,15 @@
+#viewport {
+    height: 400px;
+    width: 400px;
+    border: 1px dashed gray;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.board td {
+    border: 1px solid #add8e6;
+    height: 70px;
+    width: 70px;
+    text-align: center;
+
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Minimal AppLaud App</title>
+
+      <link rel="stylesheet" type="text/css" href="style/default.css">
+
+	  <script type="text/javascript" charset="utf-8" src="lib/cordova-2.4.0.js"></script>
+      <script type="text/javascript" charset="utf-8" src="lib/jquery-1.9.1.js"></script>
+      <script type="text/javascript" charset="utf-8" src="lib/handlebars.js"></script>
+      <script type="text/javascript" charset="utf-8" src="script/core.js"></script>
+
+	  <script type="text/javascript" charset="utf-8">
+      
+        var onDeviceReady = function() {
+            $(function(){
+                MyApp.start();
+            });
+        };
+
+        function init() {
+            this.isInBrowser = true;
+
+            if (this.isInBrowser){
+                $(function(){
+                    MyApp.start();
+                });
+
+            } else {
+                document.addEventListener("deviceready", onDeviceReady, true);
+            }
+        }
+</script>  
+
+  </head>
+  <body onload="init();">
+
+  <div id="viewport">
+
+  </div>
+
+
+
+  </body>
+</html>
