@@ -20,21 +20,21 @@ var MyApp = {
         this.init();
 
         this.viewPort = $('#viewport');
-
         this.board = new MyApp.controls.Board(3, 3);
-
         this.board.renderTo('viewport');
 
-
+        MyApp.utils.addListener(this.board, 'cellclick', this._cellClickHandler, this);
 
     },
 
-    beep: function(number){
-        navigator.notification.beep(number || 2);
-    },
+    _lastOperation: false,
 
-    vibrate: function(duration){
-        navigator.notification.vibrate(duration || 1000);
+    _cellClickHandler: function(o){
+
+        var sign = this._lastOperation ? 0 : 1;
+        this._lastOperation = sign;
+        var text = sign ? 'x' : 'o';
+        this.board.setCellContent(o.col, o.row, text);
     }
 };
 
@@ -42,6 +42,7 @@ MyApp.controls = {
 
 
     Board: function(x, y){
+        var that = this;
 
         this._x = x || 3;
         this._y = y || 3;
@@ -75,35 +76,115 @@ MyApp.controls = {
                 var column = targetWrap.parent().children().index(target);
                 var row = targetWrap.parent().parent().children().index(target.parentNode);
 
-                alert('column: ' + column + '; row: ' + row);
+                MyApp.utils.fireEvent(that, 'cellclick', {col: column, row: row});
             });
-
-        };
-
-        this.getTargetCell = function(e){
 
         };
 
         this.renderTo = function(parentId){
             var html = getHtml();
 
-            var table = $('#' + parentId).append(html);
-            initEvents(table);
+            $('#' + parentId).append(html);
+            this._table = $('table');
+            initEvents(this._table);
         };
 
+        this.setCellContent = function(col, row, text){
+            console.log(text);
+            if (!this._table){
+                return;
+            }
 
+            var rowEl = $(this._table.find('TR')[row]);
+            var cellEl = $(rowEl.children()[col]);
+            cellEl.html(text);
+        };
 
+    }
 
+};
 
+MyApp.utils = {
 
+    _events: [],
 
+    fireEvent: function(sender, eventName, args){
+        var eventObj = null;
 
+        for (var i = 0, l = this._events.length; i < l; i++){
+            if (this._events[i].sender === sender){
+                eventObj = this._events[i];
+                break;
+            }
+        }
 
+        if (!eventObj){
+            console.log('Sender is null');
+            return;
+        }
 
+        var e = eventObj.events[eventName];
 
+        if (!e){
+            console.log('Event does not exist or no listeners ' + eventName);
+            return;
+        }
 
+        for (var i = 0, l = e.length; i < l; i++){
+            var o = e[i];
+            o.callback.call(o.scope || this, args);
+        }
+    },
 
+    addListener: function(sender, eventName, callback, scope){
+        var eventObj = null;
+        for (var i = 0, l = this._events.length; i < l; i++){
+            if (this._events[i].sender === sender){
+                eventObj = this._events[i];
+                break;
+            }
+        }
 
+        if (eventObj){
+            var e = eventObj.events[eventName];
+
+            if (e){
+                var callbackFound = false;
+
+                for (var i = 0, l = e.length; i < l; i++){
+                    if (e[i].callback === callback && e[i].scope === scope){
+                        callbackFound = true;
+                        break;
+                    }
+                }
+
+                if (!callbackFound){
+                    e.push({
+                        callback: callback,
+                        scope: scope
+                    });
+                }
+
+            } else {
+                e[eventName] = [{
+                    callback: callback,
+                    scope: scope
+                }];
+            }
+
+        } else {
+            // event foes not exists. Adding.
+
+            var events = {};
+            events[eventName] = [{
+                callback: callback,
+                scope: scope
+            }];
+            this._events.push({
+                sender: sender,
+                events: events
+            });
+        }
 
 
 
