@@ -6,12 +6,22 @@
     border-radius: 5px;
 }
 
+.board {
+    border: 1px solid #ffe1e6;
+    border-radius: 5px;
+    padding: 5px;
+}
+
 .board td {
     border: 1px solid #add8e6;
     height: 70px;
     width: 70px;
     text-align: center;
-    font-family: Verdana, ​Geneva, ​Arial, ​Helvetica, ​sans-serif;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 36px;
+}
+
+.textlabel {
+
 
 }
